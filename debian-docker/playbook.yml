@@ -1,0 +1,55 @@
+####################################################################
+#Tasklist: Debian Docker Install Automation
+#Description: Installs Docker and Docker Compose on Debian nodes using ansible
+#Author: Peter Potvin
+#Email: (REDACTED)
+#Revision 1 - 8 May 2021
+###################################################################
+- hosts: all
+  become: true
+  gather_facts: yes
+
+  tasks:
+  # Install Packages
+    - name: "Updating and upgrading system packages"
+      apt: 
+        update_cache: yes
+        cache_valid_time: 3600
+        upgrade: safe
+
+    - name: Add Apt signing key from official docker repo
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: add docker official repository for Debian Buster
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
+        state: present
+
+    - name: Index new repo into the cache
+      apt:
+        name: "*"
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+        force_apt_get: yes
+
+    - name: Actually install docker
+      apt:
+        name: "docker-ce"
+        state: latest
+
+    - name: Ensure docker-compose is installed and available
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.27.4/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+
+  # Add peter to docker
+    - name: Add sysadmin to docker group
+      user:
+        name: sysadmin
+        state: present
+        groups: sudo,docker
+        append: yes

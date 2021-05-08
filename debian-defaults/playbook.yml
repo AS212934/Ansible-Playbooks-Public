@@ -1,0 +1,101 @@
+####################################################################
+#Tasklist: Debian Default Configuration Automation
+#Description: Configures Debian nodes with the default configuration using ansible
+#Author: Peter Potvin
+#Email: (REDACTED)
+#Revision 1 - 8 May 2021
+###################################################################
+- hosts: all
+  gather_facts: true
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+  # Install Packages
+    - name: "Updating and upgrading system packages"
+      apt: 
+        update_cache: yes
+        cache_valid_time: 3600
+        upgrade: safe
+
+    - name: Install required system packages
+      apt:
+        name: "{{ sys_packages }}"
+        state: latest
+
+  # Install Kernel Headers
+    - name: Install Kernel Headers
+      apt:
+        name: "linux-headers-{{ ansible_kernel }}"
+        state: present
+
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+
+  # Sudo Group Setup
+    - name: Make sure we have a 'sudo' group
+      group:
+        name: sudo
+        state: present
+
+    - name: Allow 'sudo' group to have passwordless sudo
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+
+  # User + Key Setup
+    - name: Create a new regular user with sudo privileges
+      user:
+        name: "{{ create_user }}"
+        state: present
+        groups: sudo
+        append: yes
+        create_home: yes
+        shell: /bin/bash
+
+    # Ansible SSH Key Setup
+    - name: Set authorized key for remote user
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ copy_local_key_1 }}"
+
+    # User SSH Key Setup
+    - name: Set authorized key for remote user
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ copy_local_key_2 }}"
+
+    - name: Disable password authentication for all users (1/2)
+      replace:
+        path: /etc/ssh/sshd_config
+        after: 'PasswordAuthentication'
+        regexp: '^(.*)PasswordAuthentication(.*)$'
+        replace: ''
+
+    - name: Disable password authentication for all users (2/2)
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^(.*)PasswordAuthentication(.*)$'
+        line: 'PasswordAuthentication no'
+
+    - name: Disable password authentication for root
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+        state: present
+        backup: yes
+      notify:
+        - restart ssh
+
+  handlers:
+    - name: restart ssh
+      service:
+        name=sshd
+        state=restarted
