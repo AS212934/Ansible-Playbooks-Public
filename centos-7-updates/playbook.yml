@@ -2,8 +2,6 @@
 #Tasklist: CentOS 7 Update automation
 #Description: Updates CentOS 7 nodes using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
 - hosts: centos-7
   gather_facts: true
@@ -25,3 +23,4 @@
       debug:
         msg: "yum command produced errors"
       when: yumcommandout is not defined
+

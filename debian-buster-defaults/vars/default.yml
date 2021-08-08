@@ -1,0 +1,9 @@
+create_user: sysadmin
+# Ansible SSH Key
+copy_local_key_1: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+# sysadmin SSH Key
+copy_local_key_2: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa2.pub') }}"
+# PRT SSH Key
+copy_local_key_3: "{{ lookup('file', lookup('env','HOME') + '/.prt/prt_rsa.pub') }}"
+sys_packages: ['sudo', 'dnsutils', 'git', 'wget', 'curl', 'lsb-release', 'htop', 'python3', 'python3-pip', 'tmux', 'jq', 'netcat', 'bc', 'vnstat', 'rsync', 'build-essential', 'apt-transport-https', 'software-properties-common', 'ca-certificates', 'gnupg2','flex', 'bison', 'libncurses5-dev', 'libreadline-dev', 'libssh-dev', 'm4', 'autoconf', 'automake', 'dos2unix', 'nload']
+

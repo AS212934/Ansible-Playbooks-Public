@@ -2,10 +2,8 @@
 #Tasklist: Debian/Ubuntu Update automation
 #Description: Updates Debian/Ubuntu nodes using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
-- hosts: debian
+- hosts: debian-buster
   become: true
 
   tasks:
@@ -32,3 +30,4 @@
         post_reboot_delay: 30
         test_command: uptime
       when: reboot_required_file.stat.exists
+

@@ -1,9 +1,7 @@
 ####################################################################
 #Tasklist: Debian Default Configuration Automation
-#Description: Configures Debian nodes with the default configuration using ansible
+#Description: Configures Debian Buster nodes with the default configuration using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
 - hosts: all
   gather_facts: true
@@ -24,11 +22,17 @@
         name: "{{ sys_packages }}"
         state: latest
 
+  # Install Kernel
+    - name: Install Kernel 
+      apt:
+        name: "linux-image-amd64"
+        state: latest
+
   # Install Kernel Headers
     - name: Install Kernel Headers
       apt:
-        name: "linux-headers-{{ ansible_kernel }}"
-        state: present
+        name: "linux-headers-amd64"
+        state: latest
 
     - name: Remove dependencies that are no longer required
       apt:
@@ -71,6 +75,14 @@
         state: present
         key: "{{ copy_local_key_2 }}"
 
+    # PRT SSH Key Setup
+    # See https://github.com/AS212934/PRT for instructions on how to install PRT
+    - name: Set authorized key for remote user
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ copy_local_key_3 }}"
+
     - name: Disable password authentication for all users (1/2)
       replace:
         path: /etc/ssh/sshd_config
@@ -99,3 +111,4 @@
       service:
         name=sshd
         state=restarted
+

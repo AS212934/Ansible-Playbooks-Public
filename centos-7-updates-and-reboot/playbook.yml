@@ -2,8 +2,6 @@
 #Tasklist: CentOS 7 Update automation
 #Description: Updates CentOS 7 nodes and reboots them (if needed) using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
 - hosts: centos-7
   gather_facts: true
@@ -39,3 +37,4 @@
         post_reboot_delay: 30
         test_command: uptime
       when: reboot_required_file.stat.exists
+

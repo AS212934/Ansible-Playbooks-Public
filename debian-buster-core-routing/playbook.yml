@@ -1,0 +1,59 @@
+####################################################################
+#Tasklist: Core Router Provisioning Automation
+#Description: Provisions core routers running on Debian nodes using ansible
+#Author: Peter Potvin
+###################################################################
+- hosts: all
+  become: true
+  gather_facts: yes
+
+  tasks:
+  # Install Packages
+    - name: "Updating and upgrading system packages"
+      apt: 
+        update_cache: yes
+        cache_valid_time: 3600
+        upgrade: safe
+
+    - name: Download Go install script
+      get_url:
+        url: https://raw.githubusercontent.com/Accuris-Hosting/Useful-Scripts/master/go-install.sh
+        dest: /home/sysadmin/scripts/go-install.sh
+        mode: 'u+x,g+x'
+
+    - name: Download BIRD2 install script
+      get_url:
+        url: https://raw.githubusercontent.com/Accuris-Hosting/Useful-Scripts/master/debian10-amd64-bird2-install.sh
+        dest: /home/sysadmin/scripts/debian10-amd64-bird2-install.sh
+        mode: 'u+x,g+x'
+
+    - name: Download bgpq4 install script
+      get_url:
+        url: https://raw.githubusercontent.com/Accuris-Hosting/Useful-Scripts/master/bgpq4-install.sh
+        dest: /home/sysadmin/scripts/bgpq4-install.sh
+        mode: 'u+x,g+x'
+
+    - name: Download Pathvector install script
+      get_url:
+        url: https://raw.githubusercontent.com/Accuris-Hosting/Useful-Scripts/master/pathvector-install.sh
+        dest: /home/sysadmin/scripts/pathvector-install.sh
+        mode: 'u+x,g+x'
+
+    - name: Execute Go install script on remote system
+      command: sudo bash /home/sysadmin/scripts/go-install.sh
+
+    - name: Execute BIRD2 install script on remote system
+      command: sudo bash /home/sysadmin/scripts/debian10-amd64-bird2-install.sh
+
+    - name: Execute bgpq4 install script on remote system
+      command: sudo bash /home/sysadmin/scripts/bgpq4-install.sh
+
+    - name: Execute Pathvector install script on remote system
+      command: sudo bash /home/sysadmin/scripts/pathvector-install.sh
+
+  handlers:
+    - name: restart bird
+      service:
+        name=bird
+        state=restarted
+

@@ -2,8 +2,6 @@
 #Tasklist: CentOS 7 Default Configuration Automation
 #Description: Configures CentOS 7 nodes with the default configuration using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
 - hosts: all
   gather_facts: true
@@ -42,10 +40,10 @@
         msg: "yum command produced errors"
       when: yumcommandout2 is not defined
 
-  # Install Kernel Headers
-    - name: Install Kernel Headers
+  # Install Kernel
+    - name: Install Kernel
       yum:
-        name: "kernel-headers-{{ ansible_kernel }}"
+        name: "linux-image-amd64"
         state: latest
       register: yumcommandout3
       when:
@@ -56,6 +54,21 @@
       debug:
         msg: "yum command produced errors"
       when: yumcommandout3 is not defined
+
+  # Install Kernel Headers
+    - name: Install Kernel Headers
+      yum:
+        name: "kernel-headers-amd64"
+        state: latest
+      register: yumcommandout4
+      when:
+        - (ansible_facts['distribution_major_version'] == '6') or
+          (ansible_facts['distribution_major_version'] == '7')
+
+    - name: Print errors if yum failed
+      debug:
+        msg: "yum command produced errors"
+      when: yumcommandout4 is not defined
 
   # Wheel Group Setup
     - name: Make sure we have a 'wheel' group
@@ -94,6 +107,14 @@
         state: present
         key: "{{ copy_local_key_2 }}"
 
+    # PRT SSH Key Setup
+    # See https://github.com/AS212934/PRT for instructions on how to install PRT
+    - name: Set authorized key for remote user
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ copy_local_key_3 }}"
+
     - name: Disable password authentication for all users (1/2)
       replace:
         path: /etc/ssh/sshd_config
@@ -122,3 +143,4 @@
       service:
         name=sshd
         state=restarted
+

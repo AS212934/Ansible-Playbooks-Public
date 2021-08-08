@@ -1,4 +1,4 @@
-- hosts: debian
+- hosts: debian-buster
   become: true
 
   tasks:
@@ -11,3 +11,4 @@
     - name: Remove dependencies that are no longer required
       apt:
         autoremove: yes
+

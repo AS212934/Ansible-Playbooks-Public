@@ -1,9 +1,7 @@
 ####################################################################
 #Tasklist: Debian Docker Install Automation
-#Description: Installs Docker and Docker Compose on Debian nodes using ansible
+#Description: Installs Docker and Docker Compose on Debian Buster nodes using ansible
 #Author: Peter Potvin
-#Email: (REDACTED)
-#Revision 1 - 8 May 2021
 ###################################################################
 - hosts: all
   become: true
@@ -37,19 +35,20 @@
 
     - name: Actually install docker
       apt:
-        name: "docker-ce"
+        name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
         state: latest
 
     - name: Ensure docker-compose is installed and available
       get_url:
-        url: https://github.com/docker/compose/releases/download/1.27.4/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}
+        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}
         dest: /usr/local/bin/docker-compose
         mode: 'u+x,g+x'
 
-  # Add peter to docker
+  # Add sysadmin to docker
     - name: Add sysadmin to docker group
       user:
         name: sysadmin
         state: present
         groups: sudo,docker
         append: yes
+
