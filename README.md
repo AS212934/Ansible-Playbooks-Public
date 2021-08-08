@@ -20,12 +20,12 @@ Commands starting with `$` denote a non-root user, while commands starting with 
 #### Debian 10 Default Configuration
 To run the debian-defaults ansible playbook for the first time on a fresh install with only the `root` user configured, ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
 ```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-defaults/playbook.yml -u root -k
+$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-buster-defaults/playbook.yml -u root -k
 ```
 
 If you already have a fresh install with a new user configured, ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
 ```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-defaults/playbook.yml -u sysadmin -K
+$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-buster-defaults/playbook.yml -u sysadmin -K
 ```
 
 #### Debian 10 Docker Configuration
@@ -33,27 +33,21 @@ NOTE: Ensure that the Debian 10 Default Configuration playbook has been successf
 
 Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
 ```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-docker/playbook.yml
+$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-buster-docker/playbook.yml
 ```
 
-#### Debian 10 Peering Configuration
+#### Debian 10 Core Routing Configuration
 NOTE: Ensure that the Debian 10 Default Configuration playbook has been successfully run prior to executing this playbook.
 
 Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
 ```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-peering/playbook.yml
+$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-buster-core-routing/playbook.yml
 ```
 
 #### Debian 10 Update
 Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
 ```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-updates.yml
-```
-
-#### Debian 10 Update & Reboot
-Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
-```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-updates-and-reboot.yml
+$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/debian-buster-updates.yml
 ```
 
 ### CentOS 7
@@ -74,8 +68,3 @@ Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the fo
 $ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/centos-7-updates/playbook.yml
 ```
 
-#### CentOS 7 Update & Reboot
-Ensure you're in the Ansible directory (`/home/sysadmin/ansible`) and run the following command on the ansible server:
-```
-$ ansible-playbook -i hosts -l {TARGET_HOSTNAME_HERE} playbooks/centos-7-updates-and-reboot/playbook.yml
-```
